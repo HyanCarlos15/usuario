@@ -2,6 +2,7 @@ package com.javanauta.usuario.controller;
 
 import com.javanauta.usuario.business.UsuarioService;
 import com.javanauta.usuario.business.dto.UsuarioDTO;
+import com.javanauta.usuario.infrastructure.entity.Usuario;
 import com.javanauta.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +37,8 @@ public class UsuarioController {
     }
 
     @GetMapping // Não precisa de um RI, pois usa por padrão que seria o Usuario
-    public ResponseEntity<UsuarioDTO> buscaUsuarioPorEmail(@RequestParam String email) {
-        usuarioService.buscaUsuarioPorEmail(email);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Usuario> buscaUsuarioPorEmail(@RequestParam("email") String email) {
+        return ResponseEntity.ok(usuarioService.buscaUsuarioPorEmail(email));
     }
 
     @DeleteMapping("/{email}")
@@ -46,6 +46,12 @@ public class UsuarioController {
         usuarioService.deletaUsuarioPorEmail(email);
         return ResponseEntity.ok().build();
 
+    }
+
+    @PutMapping
+    public ResponseEntity<UsuarioDTO> atualizaDadosUsuario(@RequestBody UsuarioDTO dto,
+                                                           @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(usuarioService.atualizaDadosUsuario(token, dto));
     }
 
 }
