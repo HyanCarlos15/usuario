@@ -21,14 +21,18 @@ public class UsuarioController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+//    Salvar Usuario
     @PostMapping
     public ResponseEntity<UsuarioDTO> salvaUsuario(@RequestBody UsuarioDTO usuarioDTO) {
         return ResponseEntity.ok(usuarioService.salvaUsuario(usuarioDTO));
     }
 
-    @PostMapping("/login")
+//  Fazer um login utilizando altenticação por email e senha
 //  DTO são entrada de dados que saem do servidor, e e utilizada quando não quer expor todos os dados, filtros para expor oque é importante
 //    @Request e @Response - faz esse filtro
+
+    @PostMapping("/login")
+
     public String login(@RequestBody UsuarioDTO usuarioDTO) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(usuarioDTO.getEmail(),usuarioDTO.getSenha())
@@ -37,11 +41,13 @@ public class UsuarioController {
         return "Bearer " + jwtUtil.generateToken(authentication.getName());
     }
 
+//    Metodos de Busca
     @GetMapping // Não precisa de um RI, pois usa por padrão que seria o Usuario
     public ResponseEntity<UsuarioDTO> buscaUsuarioPorEmail(@RequestParam("email") String email) {
         return ResponseEntity.ok(usuarioService.buscaUsuarioPorEmail(email));
     }
 
+//    Metodos para deletar
     @DeleteMapping("/{email}")
     public ResponseEntity<Void> deletaUsuarioPorEmail(@PathVariable String email) {
         usuarioService.deletaUsuarioPorEmail(email);
@@ -49,6 +55,7 @@ public class UsuarioController {
 
     }
 
+//    Alterações dentro das Entidades
     @PutMapping
     public ResponseEntity<UsuarioDTO> atualizaDadosUsuario(@RequestBody UsuarioDTO dto,
                                                            @RequestHeader("Authorization") String token) {
@@ -65,6 +72,20 @@ public class UsuarioController {
     public ResponseEntity<TelefoneDTO> atualizaTelefone (@RequestBody TelefoneDTO dto,
                                                          @RequestParam("id") Long id) {
         return ResponseEntity.ok(usuarioService.atualizaTelefone(id, dto));
+    }
+
+
+//    Post é para cadastrar novos enderecos e telefone dentro do usuario
+    @PostMapping("/endereco")
+    public ResponseEntity<EnderecoDTO> cadastraEndereco (@RequestBody EnderecoDTO dto,
+                                                         @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(usuarioService.cadastraEndereco(token, dto));
+    }
+
+    @PostMapping("/telefone")
+    public ResponseEntity<TelefoneDTO> cadastraTelefone (@RequestBody TelefoneDTO dto,
+                                                         @RequestHeader ("Authorization") String token) {
+        return ResponseEntity.ok(usuarioService.cadastraTelefone(token, dto));
     }
 
 }
