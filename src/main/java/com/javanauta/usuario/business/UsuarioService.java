@@ -56,7 +56,7 @@ public class UsuarioService {
         try{
             return usuarioConverter.paraUsuarioDTO(
                     usuarioRepository.findByEmail(email).orElseThrow(
-                    () -> new ResourceNotFoundException("Email não encontrado" + email)));
+                            () -> new ResourceNotFoundException("Email não encontrado" + email)));
         } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException("Email não encontrado" + email);
         }
